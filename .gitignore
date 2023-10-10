@@ -26,4 +26,5 @@ Manifest.toml
 # Other
 data/*
 raw_data/*
+figs/*
 .vscode/*
