@@ -1,0 +1,13 @@
+{
+    "name": "process_archetypes",
+    "tooltype": "julia",
+    "includes": [
+        "process_archetypes.jl"
+    ],
+    "description": "Process archetype buildings directly from raw data and definitions, avoiding bottlenecks in Spine DB API.",
+    "inputfiles": [],
+    "inputfiles_opt": [],
+    "outputfiles": [],
+    "cmdline_args": [],
+    "includes_main_path": "."
+}
