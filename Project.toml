@@ -8,4 +8,5 @@ ArchetypeBuildingModel = "83d8b715-256d-42a8-83e0-f336dff6771c"
 FinnishBuildingStockData = "e9c5a5b1-9140-4320-a2af-ba1393a35d40"
 
 [compat]
-FinnishBuildingStockData = ">= 2.0.0"
+FinnishBuildingStockData = ">= 2.1.4"
+ArchetypeBuildingModel = ">= 2.6.2"
