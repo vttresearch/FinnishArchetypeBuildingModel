@@ -97,13 +97,11 @@ m = Module()
 @time run_statistical_tests(; limit=Inf, mod=m)
 
 
-## Import object classes relevant for the definitions into <objects> url if defined.
+## Import object classes relevant for `building_scope` definitions into <objects> url if defined.
 
-archetype_template = load_definitions_template()
-objclss = Symbol.(first.(archetype_template["object_classes"]))
-relclss = Symbol.(first.(archetype_template["relationship_classes"]))
 if !isnothing(objects_url)
     @info "Importing definition-relevant object classes into `$(objects_url)`..."
+    objclss = [:building_stock, :building_type, :heat_source, :location_id]
     @time import_data(
         objects_url,
         [m._spine_object_classes[oc] for oc in objclss],
@@ -125,6 +123,9 @@ m = Module()
 ## Create, filter, and test processed statistics
 
 @time create_processed_statistics!(m, num_lids, tcw, ind, vp)
+archetype_template = load_definitions_template()
+objclss = Symbol.(first.(archetype_template["object_classes"]))
+relclss = Symbol.(first.(archetype_template["relationship_classes"]))
 filter_module!(m; obj_classes=objclss, rel_classes=relclss)
 @time run_input_data_tests(m)
 
