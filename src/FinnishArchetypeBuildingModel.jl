@@ -20,6 +20,7 @@ export add_results!,
     SpineOptInput,
     using_spinedb,
     merge_data!,
+    merge_spine_modules!,
     write_to_url
 
 end # module FinnishArchetypeBuildingModel
