@@ -2,6 +2,7 @@ module FinnishArchetypeBuildingModel
 
 using FinnishBuildingStockData
 using ArchetypeBuildingModel
+using Serialization
 
 export add_results!,
     archetype_building_processing,
@@ -16,6 +17,7 @@ export add_results!,
     run_input_data_tests,
     run_statistical_tests,
     run_structural_tests,
+    serialize_processed_data,
     solve_archetype_building_hvac_demand,
     SpineOptInput,
     using_spinedb,
