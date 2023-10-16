@@ -31,12 +31,10 @@ bt_hs_set = [
     (
         :detached_house,
         [
-            :coal,
             :district_heating,
             :electricity,
             :ground_source_heat,
             :light_oil,
-            :natural_gas,
             :other,
             :peat,
             :wood
