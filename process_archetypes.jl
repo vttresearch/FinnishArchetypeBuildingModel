@@ -35,6 +35,7 @@ if length(ARGS) < 6
     13. `-save_layouts <false>`, controls whether auto-generated `building_weather` layouts are saved as images.
     14. `-alternative <"">`, the name of the alternative where the parameters are saved, empty by default.
     15. `-realization <realization>`, The name of the stochastic scenario containing true data over forecasts, only relevant when generating stochastic forecast data.
+    16. `-skip_raw_input_tests <false>`, Optional flag for skipping raw input data tests for speed, as they typically only ever need to be tested once.
     """
 elseif !iseven(length(ARGS))
     @error """
@@ -82,6 +83,7 @@ else
     save_layouts = parse(Bool, lowercase(get(kws, "-save_layouts", "false")))
     alternative = get(kws, "-alternative", "")
     realization = Symbol(get(kws, "-realization", "realization"))
+    skip_raw_tests = parse(Bool, lowercase(get(kws, "-skip_raw_input_tests", "false")))
 end
 
 
@@ -89,12 +91,16 @@ end
 
 m = Module()
 @time data = data_from_package(dp_paths...)
-@info "Generating data convenience functions..."
-@time using_spinedb(data, m)
-@info "Running structural input data tests..."
-@time run_structural_tests(; limit=Inf, mod=m)
-@info "Running statistical input data tests..."
-@time run_statistical_tests(; limit=Inf, mod=m)
+if skip_raw_tests
+    @info "Skipping raw input data tests, `skip_raw_input_tests = true`"
+else
+    @info "Generating data convenience functions..."
+    @time using_spinedb(data, m)
+    @info "Running structural input data tests..."
+    @time run_structural_tests(; limit=Inf, mod=m)
+    @info "Running statistical input data tests..."
+    @time run_statistical_tests(; limit=Inf, mod=m)
+end
 
 
 ## Import object classes relevant for `building_scope` definitions into <objects> url if defined.
