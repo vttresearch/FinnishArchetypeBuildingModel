@@ -92,7 +92,7 @@ end
 m = Module()
 @time data = data_from_package(dp_paths...)
 if skip_raw_tests
-    @info "Skipping raw input data tests, `skip_raw_input_tests = true`"
+    @warn "Skipping raw input data tests and object import!"
 else
     @info "Generating data convenience functions..."
     @time using_spinedb(data, m)
@@ -100,19 +100,16 @@ else
     @time run_structural_tests(; limit=Inf, mod=m)
     @info "Running statistical input data tests..."
     @time run_statistical_tests(; limit=Inf, mod=m)
-end
-
-
-## Import object classes relevant for `building_scope` definitions into <objects> url if defined.
-
-if !isnothing(objects_url)
-    @info "Importing definition-relevant object classes into `$(objects_url)`..."
-    objclss = [:building_stock, :building_type, :heat_source, :location_id]
-    @time import_data(
-        objects_url,
-        [m._spine_object_classes[oc] for oc in objclss],
-        "Auto-import object classes relevant for archetype definitions."
-    )
+    # Import object classes relevant for `building_scope` definitions into <objects> url if defined.
+    if !isnothing(objects_url)
+        @info "Importing definition-relevant object classes into `$(objects_url)`..."
+        objclss = [:building_stock, :building_type, :heat_source, :location_id]
+        @time import_data(
+            objects_url,
+            [m._spine_object_classes[oc] for oc in objclss],
+            "Auto-import object classes relevant for archetype definitions."
+        )
+    end
 end
 
 
