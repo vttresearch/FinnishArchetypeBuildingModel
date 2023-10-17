@@ -25,34 +25,46 @@ ind = 0.1 # Assumed interior node depth.
 vp = 1209600.0 # Assumed period of variations for calculating effective thermal mass.
 realization = :realization
 save_layouts = true
+renew_data = false
 
 
-## Read raw data and run tests
+## Create hash from raw data settings to see if data already exists.
 
-m = Module()
-@time data = data_from_package(datapackage_paths...)
-@info "Generating data convenience functions..."
-@time using_spinedb(data, m)
-@info "Running structural input data tests..."
-@time run_structural_tests(; limit=Inf, mod=m)
-@info "Running statistical input data tests..."
-@time run_statistical_tests(; limit=Inf, mod=m)
+hsh = hash((num_lids, tcw, ind, vp))
+filepath = "raw_data\\$(hsh).ser"
+if !renew_data && isfile(filepath)
+    # Use existing data if no flag and data exists.
+    @warn "Using found existing processed data `$(filepath)`!"
+else
+    # Otherwise, process and test raw data anew.
+    m = Module()
+    @time data = data_from_package(datapackage_paths...)
+    @info "Generating data convenience functions..."
+    @time using_spinedb(data, m)
+    @info "Running structural input data tests..."
+    @time run_structural_tests(; limit=Inf, mod=m)
+    @info "Running statistical input data tests..."
+    @time run_statistical_tests(; limit=Inf, mod=m)
+    @time create_processed_statistics!(m, num_lids, tcw, ind, vp)
+    @info "Serialize and save processed data..."
+    @time serialize_processed_data(m, hsh; filepath=filepath)
 
-
-## Import object classes relevant for `building_scope` definitions into <objects> url if defined.
-
-if !isnothing(objects_url)
-    @info "Importing definition-relevant object classes into `$(objects_url)`..."
-    objclss = [:building_stock, :building_type, :heat_source, :location_id]
-    @time import_data(
-        objects_url,
-        [m._spine_object_classes[oc] for oc in objclss],
-        "Auto-import object classes relevant for archetype definitions."
-    )
+    # Import object classes relevant for `building_scope` definitions into <objects> url if defined.
+    if !isnothing(objects_url)
+        @info "Importing definition-relevant object classes into `$(objects_url)`..."
+        objclss = [:building_stock, :building_type, :heat_source, :location_id]
+        @time import_data(
+            objects_url,
+            [m._spine_object_classes[oc] for oc in objclss],
+            "Auto-import object classes relevant for archetype definitions."
+        )
+    end
 end
+@info "Deserialize saved data..."
+@time data = FinnishArchetypeBuildingModel.deserialize(filepath)
 
 
-## Import and merge definitions
+## Import, merge, and test definitions
 
 m = Module()
 @time defs = data_from_url(definitions_url)
@@ -60,15 +72,6 @@ m = Module()
 @time merge_data!(defs, data)
 @info "Generating data and definitions convenience functions..."
 @time using_spinedb(defs, m)
-
-
-## Create, filter, and test processed statistics
-
-@time create_processed_statistics!(m, num_lids, tcw, ind, vp)
-archetype_template = load_definitions_template()
-objclss = Symbol.(first.(archetype_template["object_classes"]))
-relclss = Symbol.(first.(archetype_template["relationship_classes"]))
-filter_module!(m; obj_classes=objclss, rel_classes=relclss)
 @time run_input_data_tests(m)
 
 
