@@ -35,7 +35,7 @@ if length(ARGS) < 6
     13. `-save_layouts <false>`, controls whether auto-generated `building_weather` layouts are saved as images.
     14. `-alternative <"">`, the name of the alternative where the parameters are saved, empty by default.
     15. `-realization <realization>`, The name of the stochastic scenario containing true data over forecasts, only relevant when generating stochastic forecast data.
-    16. `-skip_raw_input_tests <false>`, Optional flag for skipping raw input data tests for speed, as they typically only ever need to be tested once.
+    16. `-renew_data <true>`, Optional flag to disable regenerating and retesting raw input data for speed.
     """
 elseif !iseven(length(ARGS))
     @error """
@@ -83,23 +83,31 @@ else
     save_layouts = parse(Bool, lowercase(get(kws, "-save_layouts", "false")))
     alternative = get(kws, "-alternative", "")
     realization = Symbol(get(kws, "-realization", "realization"))
-    skip_raw_tests = parse(Bool, lowercase(get(kws, "-skip_raw_input_tests", "false")))
+    renew_data = parse(Bool, lowercase(get(kws, "-renew_data", "true")))
 end
 
 
-## Read raw data and run tests
+## Create hash from raw data settings to see if data already exists.
 
-m = Module()
-@time data = data_from_package(dp_paths...)
-if skip_raw_tests
-    @warn "Skipping raw input data tests and object import!"
+hsh = hash((num_lids, tcw, ind, vp))
+filepath = "raw_data\\$(hsh).ser"
+if !renew_data && isfile(filepath)
+    # Use existing data if no flag and data exists.
+    @warn "Using found existing processed data `$(filepath)`!"
 else
+    # Otherwise, process and test raw data anew.
+    m = Module()
+    @time data = data_from_package(datapackage_paths...)
     @info "Generating data convenience functions..."
     @time using_spinedb(data, m)
     @info "Running structural input data tests..."
     @time run_structural_tests(; limit=Inf, mod=m)
     @info "Running statistical input data tests..."
     @time run_statistical_tests(; limit=Inf, mod=m)
+    @time create_processed_statistics!(m, num_lids, tcw, ind, vp)
+    @info "Serialize and save processed data..."
+    @time serialize_processed_data(m, hsh; filepath=filepath)
+
     # Import object classes relevant for `building_scope` definitions into <objects> url if defined.
     if !isnothing(objects_url)
         @info "Importing definition-relevant object classes into `$(objects_url)`..."
@@ -111,9 +119,11 @@ else
         )
     end
 end
+@info "Deserialize saved data..."
+@time data = FinnishArchetypeBuildingModel.deserialize(filepath)
 
 
-## Import and merge definitions
+## Import, merge, and test definitions
 
 m = Module()
 @time defs = data_from_url(def_url)
@@ -121,15 +131,6 @@ m = Module()
 @time merge_data!(defs, data)
 @info "Generating data and definitions convenience functions..."
 @time using_spinedb(defs, m)
-
-
-## Create, filter, and test processed statistics
-
-@time create_processed_statistics!(m, num_lids, tcw, ind, vp)
-archetype_template = load_definitions_template()
-objclss = Symbol.(first.(archetype_template["object_classes"]))
-relclss = Symbol.(first.(archetype_template["relationship_classes"]))
-filter_module!(m; obj_classes=objclss, rel_classes=relclss)
 @time run_input_data_tests(m)
 
 

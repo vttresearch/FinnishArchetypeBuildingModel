@@ -6,7 +6,8 @@ version = "1.1.0"
 [deps]
 ArchetypeBuildingModel = "83d8b715-256d-42a8-83e0-f336dff6771c"
 FinnishBuildingStockData = "e9c5a5b1-9140-4320-a2af-ba1393a35d40"
+Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
 [compat]
-FinnishBuildingStockData = ">= 2.1.6"
 ArchetypeBuildingModel = ">= 2.6.2"
+FinnishBuildingStockData = ">= 2.2.0"
