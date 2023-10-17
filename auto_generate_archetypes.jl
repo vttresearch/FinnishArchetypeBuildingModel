@@ -64,7 +64,7 @@ bs = :FI_2020
 storey_map = Dict(
     :apartment_block => 4.0,
     :detached_house => 1.5,
-    :terraced_house => 2.0
+    :terraced_house => 1.5
 )
 loadbear_map = Dict(
     :apartment_block => 0.5,
@@ -112,7 +112,7 @@ sys_link_node = m.building_node(sys_link_node)
                         :external_wall_load_bearing_fraction => parameter_value(loadbear_map[bt.name]),
                         :partition_wall_load_bearing_fraction => parameter_value(loadbear_map[bt.name]),
                         :indoor_air_cooling_set_point_override_K => parameter_value(cooling_setpoint_K),
-                        :indoor_air_heating_set_point_override_J => parameter_value(heating_setpoint_K),
+                        :indoor_air_heating_set_point_override_K => parameter_value(heating_setpoint_K),
                         :weather_end => parameter_value("$(year)-12"),
                         :weather_start => parameter_value("$(year)-01")
                     )
