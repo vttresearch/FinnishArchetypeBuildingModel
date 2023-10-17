@@ -46,9 +46,9 @@ else
     # Read keywords
     kws = Dict(ARGS[i] => get(ARGS, i + 1, nothing) for i in 1:2:length(ARGS))
     # Parse required keywords
-    dp_paths = values(filter(r -> occursin("datapackage", r[1]), kws))
+    datapackage_paths = values(filter(r -> occursin("datapackage", r[1]), kws))
     def_url = get(kws, "-definitions", nothing)
-    if length(dp_paths) < 2
+    if length(datapackage_paths) < 2
         @error """
         `process_archetypes.jl` requires at least two datapackages as input:
         1. Datapackage containing statistical data about the Finnish building stock.
