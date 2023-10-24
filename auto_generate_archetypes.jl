@@ -13,21 +13,21 @@ using SpineInterface
 ## Required definitions
 
 definitions_url = "sqlite:///C:\\_SPINEPROJECTS\\flexib_finnish_building_stock_validation\\archetype_definitions.sqlite"
-simulated_years = vcat(collect(2011:2016), collect(2020:2021))
+simulated_years = 2011:2016 #vcat(collect(2011:2016), collect(2020:2021))
 bt_hs_set = [
-    #=(
+    (
         :apartment_block,
         [
-            :district_heating,
+            #:district_heating,
             :electricity,
             :ground_source_heat,
-            :light_oil,
-            :natural_gas,
-            :other,
-            :peat,
-            :wood
+            #:light_oil,
+            #:natural_gas,
+            #:other,
+            #:peat,
+            #:wood
         ]
-    ),=#
+    ),
     (
         :detached_house,
         [
@@ -69,6 +69,7 @@ storey_map = Dict(
 cooling_setpoint_K = 25.0 + 273.15
 heating_setpoint_K = 21.0 + 273.15
 sys_link_node = Symbol("@system_link_node_1")
+energy_efficiency_override = 0.92
 
 
 ## Open definitions url and fetch the Objects
@@ -106,7 +107,8 @@ sys_link_node = m.building_node(sys_link_node)
                     :indoor_air_cooling_set_point_override_K => parameter_value(cooling_setpoint_K),
                     :indoor_air_heating_set_point_override_K => parameter_value(heating_setpoint_K),
                     :weather_end => parameter_value("$(year)-12"),
-                    :weather_start => parameter_value("$(year)-01")
+                    :weather_start => parameter_value("$(year)-01"),
+                    :energy_efficiency_override_multiplier => parameter_value(energy_efficiency_override)
                 )
             )
             add_object_parameter_values!(m.building_archetype, arch_param_dict)
