@@ -17,23 +17,25 @@ years = Symbol.(2011:2016)
 
 df = DataFrame(
     building_type=Symbol[],
-    heat_source=Symbol[],
     process=Symbol[],
     year=Symbol[],
     total_consumption_GWh=Float64[]
 )
 for ((arch, process), valdict) in results__building_archetype__building_process.parameter_values
     total_cons_GWh = sum(values(valdict[:hvac_consumption_MW])) / 1000
-    bs, bt, hs, y = Symbol.(split(String(arch.name), "__"))
+    bs, bt, y = Symbol.(split(String(arch.name), "__"))
     p = process.name
-    push!(df, (bt, hs, p, y, total_cons_GWh))
+    push!(df, (bt, p, y, total_cons_GWh))
 end
 df = unstack(df, :year, :total_consumption_GWh)
-df = df[!, [:building_type, :heat_source, :process, years...]]
+df = df[!, [:building_type, :process, years...]]
 
 # If the Finnish statistics documentation is to be trusted,
 # the sum of electric consumption and heat pump energy should correspond to
 # the final heat demand of electrically heated buildings.
 # However, this includes DHW and cooling consumption as well...
+# Oh, and the electricity kind of mixes with wood and everything else,
+# so it might be impossible to say anything for certain.
 
-df_totals = combine(groupby(df, :building_type), years .=> sum)
+df_bt_totals = combine(groupby(df, :building_type), years .=> sum)
+df_p_totals = combine(groupby(df, :process), years .=> sum)
