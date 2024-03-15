@@ -7,6 +7,13 @@ The goal of this module is to integrate the Julia workflows of
 and [ArchetypeBuildingModel](https://github.com/vttresearch/ArchetypeBuildingModel),
 in order to reduce the required computational time.
 
+>[!IMPORTANT]
+>2024-03-15: This repository is no longer in active development, as
+>[ArBuMo](https://github.com/vttresearch/ArBuMo) is replacing the older
+>[ArchetypeBuildingModel](https://github.com/vttresearch/ArchetypeBuildingModel).
+>New developments happen in the [FinArBuMo](https://github.com/vttresearch/FinArBuMo)
+>fork instead.
+
 
 ## Installation
 
