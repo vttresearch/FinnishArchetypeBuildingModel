@@ -190,7 +190,7 @@ for (input_url, name, input) in [
         @info "Processing and writing $(name) input data into `$(input_url)`..."
         @time write_to_url(
             String(input_url),
-            input(archetype_results_dictionary; mod=m);
+            input(input_url, archetype_results_dictionary; mod=m);
             alternative=alternative
         )
     end
