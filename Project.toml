@@ -1,7 +1,8 @@
 name = "FinnishArchetypeBuildingModel"
 uuid = "d94f30e3-2b27-4c4f-9fcb-3424fc34d710"
 authors = ["Topi Rasku <topi.rasku@vtt.fi>"]
-version = "1.2.1"
+version = "1.2.2"
+version_note = "v0.8 datastore interface changes"
 
 [deps]
 ArchetypeBuildingModel = "83d8b715-256d-42a8-83e0-f336dff6771c"
@@ -10,5 +11,5 @@ FinnishBuildingStockData = "e9c5a5b1-9140-4320-a2af-ba1393a35d40"
 Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
 [compat]
-ArchetypeBuildingModel = ">= 2.6.2"
+ArchetypeBuildingModel = ">= 2.7.1"
 FinnishBuildingStockData = ">= 2.2.0"
