@@ -8,6 +8,8 @@ and [ArchetypeBuildingModel](https://github.com/vttresearch/ArchetypeBuildingMod
 in order to reduce the required computational time.
 
 >[!IMPORTANT]
+>2024-08-16: The *FlexiB* project funding this research is ending, making it unlikely that this module will receive see further active development.
+>
 >2024-03-15: This repository is no longer in active development, as
 >[ArBuMo](https://github.com/vttresearch/ArBuMo) is replacing the older
 >[ArchetypeBuildingModel](https://github.com/vttresearch/ArchetypeBuildingModel).
